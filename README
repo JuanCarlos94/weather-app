@@ -1,0 +1,10 @@
+Weather APP
+
+A simple WEB application to shows the wheather based on user's preferences.
+
+This project was created for learning purposes.
+
+Using:
+- Vue.js
+- Axios
+- Bootstrap 4.5
