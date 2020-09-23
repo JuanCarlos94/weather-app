@@ -1,4 +1,4 @@
-const API_TOKEN = ''
+const API_TOKEN = 'PUT_THE_TOKEN_HERE'
 
 const AccuWeatherApi = axios.create({
     baseURL: 'http://dataservice.accuweather.com'
