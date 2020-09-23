@@ -9,40 +9,72 @@
     <!-- Vue.js -->
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/feather-icons/dist/feather.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
-
 <body>
     <img src="./assets/background.jpg" alt="" class="img-fluid h-100 position-fixed">
     <div id="app" class="container-fluid h-100">
         <div class="row h-100 justify-content-md-center align-items-center">
             <div class="col-md-6">
-                <div class="card shadow-lg rounded">
-                    <div class="card-head">
-                        <h1 class="text-center">Como está o clima hoje?</h1>
+                <!-- Formulário para definir cidade -->
+                <div class="card shadow-lg" v-if="!weatherData">
+                    <div class="card-header">
+                        <h3 class="text-center mt-1">Como está o clima hoje?</h3>
                     </div>
                     <div class="card-body">
-                        <div class="row justify-content-md-center">
-                            <div class="col-md-8">
+                        <div class="row justify-content-md-center" v-if="!loadingWeatherData">
+                            <div class="col-md-10">
                                 <div class="form-group">
-                                    <select v-model="city" class="form-control">
-                                        <option :value="null" disabled>Cidade...</option>
-                                    </select>
+                                    <input type="text" v-model="city" class="form-control" placeholder="Digite o nome da cidade" list="dl_cities" @keyup="searchCity">
+                                    <datalist id="dl_cities">
+                                        <option v-for="c in cities" :data-value="c.Key" :value="c.LocalizedName + ' / ' + c.AdministrativeArea.ID"></option>
+                                    </datalist>
                                 </div>
                             </div>
                             <div class="col-md-2">
-                                <div class="form-group">
-                                    <select v-model="uf" class="form-control">
-                                        <option :value="null" disabled>UF...</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="col-md-2">
-                                <button type="button" class="btn btn-primary btn-block"><i data-feather="search"></i>
+                                <button type="button" class="btn btn-primary btn-block" @click="getWeather" :disabled="!cityKey"><i data-feather="search"></i>
                                     </buttom>
+                            </div>
+                        </div>
+                        <div class="row justify-content-md-center" v-else>
+                            <div class="col-md-12">
+                                <div class="text-center">
+                                    <div class="spinner-border" role="status">
+                                      <span class="sr-only">Loading...</span>
+                                    </div>
+                                  </div>
                             </div>
                         </div>
                     </div>
                 </div>
+                <!-- Formulário para definir cidade -->
+
+                <!-- Informações do clima -->
+                <div class="card shadow-lg" v-else>
+                    <div class="card-header">
+                        <button type="button" class="close" aria-label="Close" @click="newSearch">
+                            <span aria-hidden="true">&times;</span>
+                          </button>
+                    </div>
+                    <div class="card-body">
+                        <div class="row justify-content-md-center">
+                            <div class="col-md-4">
+                                <img :src="iconsFolder + icon" alt="Ensolarado" class="bg-light img-thumbnail">
+                            </div>
+                            <div class="col-md-8">
+                                <h4>{{this.city}}</h4>
+                                <p>Data: {{weatherData.DailyForecasts[0].Date}}</p>
+                                <p>Mínima: {{weatherData.DailyForecasts[0].Temperature.Minimum.Value}} Cº</p>
+                                <p>Máxima: {{weatherData.DailyForecasts[0].Temperature.Maximum.Value}} Cº</p>
+                                <p>Durante o dia: {{weatherData.DailyForecasts[0].Day.IconPhrase}}</p>
+                                <p>Durante a noite: {{weatherData.DailyForecasts[0].Night.IconPhrase}}</p>
+                                <p>Previsão para amanhã: {{weatherData.Headline.Text}}</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- Informações do clima -->
+
             </div>
         </div>
     </div>
