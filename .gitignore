@@ -1,0 +1,6 @@
+node_modules
+package-lock.json
+assets/img/sun.jpg
+assets/img/temperature.png
+assets/img/weather-forecast.png
+assets/img/wind.png
