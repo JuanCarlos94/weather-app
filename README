@@ -1,10 +1,11 @@
 Weather APP
 
-A simple WEB application to shows the wheather based on user's preferences.
+A simple WEB application to shows the wheather based on user's city.
 
 This project was created for learning purposes.
 
 Using:
 - Vue.js
 - Axios
-- Bootstrap 4.5
+- Bootstrap
+- AccuWeather API
