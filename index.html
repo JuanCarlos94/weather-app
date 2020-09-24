@@ -12,16 +12,25 @@
     <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 </head>
 <body>
-    <img src="./assets/background.jpg" alt="" class="img-fluid h-100 position-fixed">
+    <img src="./assets/background.jpg" alt="" class="img-fluid h-auto position-fixed">
     <div id="app" class="container-fluid h-100">
         <div class="row h-100 justify-content-md-center align-items-center">
             <div class="col-md-6">
-                <!-- Formulário para definir cidade -->
+
+                <!-- Form search city -->
                 <div class="card shadow-lg" v-if="!weatherData">
                     <div class="card-header">
                         <h3 class="text-center mt-1">Como está o clima hoje?</h3>
                     </div>
                     <div class="card-body">
+                        <!-- Message Error Alert -->
+                        <div class="alert alert-warning alert-dismissible fade show" role="alert" v-show="messageError">
+                            {{messageError}}
+                            <button type="button" class="close" @click="messageError = null">
+                            <span aria-hidden="true">&times;</span>
+                            </button>
+                        </div>
+                        <!-- Message Error Alert -->
                         <div class="row justify-content-md-center" v-if="!loadingWeatherData">
                             <div class="col-md-10">
                                 <div class="form-group">
@@ -47,9 +56,9 @@
                         </div>
                     </div>
                 </div>
-                <!-- Formulário para definir cidade -->
+                <!-- Form search city -->
 
-                <!-- Informações do clima -->
+                <!-- Weather INFO -->
                 <div class="card shadow-lg" v-else>
                     <div class="card-header">
                         <button type="button" class="close" aria-label="Close" @click="newSearch">
@@ -73,7 +82,7 @@
                         </div>
                     </div>
                 </div>
-                <!-- Informações do clima -->
+                <!-- Weather INFO -->
 
             </div>
         </div>
