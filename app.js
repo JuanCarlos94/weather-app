@@ -1,4 +1,4 @@
-const API_TOKEN = 'PUT_THE_TOKEN_HERE'
+const API_TOKEN = 'SH6mt3GETgPEyP3WhAz75N4MauW0Q1Rk'
 
 const AccuWeatherApi = axios.create({
     baseURL: 'http://dataservice.accuweather.com'
@@ -7,52 +7,84 @@ const AccuWeatherApi = axios.create({
 var app = new Vue({
     el: '#app',
     data: {
+        cities: [],
         city: null,
         cityKey: null,
         weatherData: null,
         icon: null,
         iconsFolder: './assets/img/',
-        loadingWeatherData: false
+        loadingWeatherData: false,
+        messageError: null
     },
     methods: {
         searchCity: async function(){
-            this.cities = await AccuWeatherApi.get(
-                '/locations/v1/cities/autocomplete?apikey=' + API_TOKEN + '&q=' + this.city + '&language=pt-br')
-                .then(function(response){
-                    if(response.data){
-                        return response.data
-                    } else {
-                        console.error('Error when list the citys, try again!')
-                    }
-                })
+            let messageError = this.messageError
+            try{
+                this.cities = await AccuWeatherApi.get(
+                    '/locations/v1/cities/autocomplete?apikey=' + API_TOKEN + '&q=' + this.city + '&language=pt-br')
+                    .then(function(response){
+                        if(response.data){
+                            return response.data
+                        }
+                        throw 'Erro ao buscar cidades, tente novamente, se o erro persistir verifique seu acesso à API.'
+                    }).catch(function(error){
+                        throw 'Erro ao buscar cidades, tente novamente, se o erro persistir verifique seu acesso à API.'
+                    })
+            } catch(e){
+                this.messageError = e
+            }
         },
         getWeather: async function(){
             this.loadingWeatherData = true
-            this.weatherData = await AccuWeatherApi.get('/forecasts/v1/daily/1day/' + this.cityKey + '?apikey=' + API_TOKEN + '&language=pt-br&metric=true')
-            .then(function(response){
-                if(response.data){
-                    return response.data
-                } else {
-                    console.error('Error when access Weather API, try again!')
+            try{
+                this.weatherData = await AccuWeatherApi.get('/forecasts/v1/daily/1day/' + this.cityKey + '?apikey=' + API_TOKEN + '&language=pt-br&metric=true')
+                .then(function(response){
+                    if(response.data){
+                        return response.data
+                    }
+                    throw 'Erro ao carregar as informações do clima, tente novamente, se o erro persistir verifique seu acesso à API.'
+                }).catch(function(e){
+                    throw 'Erro ao carregar as informações do clima, tente novamente, se o erro persistir verifique seu acesso à API.'
+                })
+                if(this.weatherData){
+                    this.setIcon(this.weatherData.DailyForecasts[0].Day.IconPhrase)
                 }
-            })
-            if(this.weatherData){
-                this.setIcon(this.weatherData.DailyForecasts[0].Day.IconPhrase)
+            } catch(e){
+                this.messageError = e
             }
-            console.log(this.weatherData)
             this.loadingWeatherData = false
         },
         setIcon: function(text){
             if(text.includes('ensolarado')){
                 this.icon = 'sun.png'
-            } if(text.includes('nublado')){
+                return
+            } if(text.includes('Predominantemente nublado')){
                 this.icon = 'partly-cloudy.png'
+                return
+            } if(text.includes('nublado')){
+                this.icon = 'cloudy.png'
+                return
+            } if(text.includes('nevando')){
+                this.icon = 'snowing.png'
+                return
+            } if(text.includes('Pancadas de chuva')){
+                this.icon = 'raining.png'
+                return
+            } if(text.includes('chuva')){
+                this.icon = 'light-rain.png'
+                return
+            } else {
+                this.icon = 'celsius.jpg'
+                return
             }
         },
         newSearch: function(){
             this.city = null
             this.weatherData = null
             this.cityKey = null
+        },
+        setMessageError: function(message){
+            this.messageError = message
         }
     },
     watch: {
